@@ -1,0 +1,794 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ReputationLend - Your Reputation is Your Collateral</title>
+    <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        primary: { 300: '#a4b8fc', 400: '#7e8ff8', 500: '#6366f1', 600: '#4f46e5', 700: '#4338ca' },
+                        accent: { 300: '#67e8f9', 400: '#22d3ee', 500: '#06b6d4', 600: '#0891b2' },
+                        gold: { 300: '#fcd34d', 400: '#fbbf24', 500: '#f59e0b', 600: '#d97706' }
+                    },
+                    fontFamily: {
+                        display: ['Sora', 'system-ui', 'sans-serif'],
+                        sans: ['Plus Jakarta Sans', 'system-ui', 'sans-serif'],
+                    },
+                    animation: {
+                        'gradient': 'gradient 8s linear infinite',
+                        'float': 'float 6s ease-in-out infinite',
+                        'glow': 'glow 2s ease-in-out infinite',
+                        'slide-in': 'slideIn 0.5s ease-out forwards',
+                        'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                    },
+                    keyframes: {
+                        gradient: {
+                            '0%, 100%': { backgroundPosition: '0% 50%' },
+                            '50%': { backgroundPosition: '100% 50%' },
+                        },
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0px)' },
+                            '50%': { transform: 'translateY(-20px)' },
+                        },
+                        glow: {
+                            '0%, 100%': { boxShadow: '0 0 20px rgba(99, 102, 241, 0.4)' },
+                            '50%': { boxShadow: '0 0 40px rgba(99, 102, 241, 0.8)' },
+                        },
+                        slideIn: {
+                            from: { opacity: '0', transform: 'translateY(20px)' },
+                            to: { opacity: '1', transform: 'translateY(0)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Dark mode styles */
+        .dark {
+            --bg-primary: #0a0a0a;
+            --bg-secondary: #1a1a1a;
+            --text-primary: #f5f5f5;
+            --text-secondary: #a3a3a3;
+            --glass-bg: rgba(255, 255, 255, 0.05);
+            --glass-border: rgba(255, 255, 255, 0.1);
+        }
+        
+        /* Light mode styles */
+        .light {
+            --bg-primary: #ffffff;
+            --bg-secondary: #f8fafc;
+            --text-primary: #0f172a;
+            --text-secondary: #64748b;
+            --glass-bg: rgba(255, 255, 255, 0.8);
+            --glass-border: rgba(15, 23, 42, 0.1);
+        }
+        
+        body {
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            transition: all 0.3s ease;
+        }
+        
+        .gradient-text {
+            background: linear-gradient(135deg, #6366f1 0%, #22d3ee 50%, #6366f1 100%);
+            background-size: 200% auto;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: gradient 4s linear infinite;
+        }
+        
+        .glass {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            transition: all 0.3s ease;
+        }
+        
+        .glass:hover {
+            background: var(--glass-bg);
+            border-color: rgba(99, 102, 241, 0.3);
+            transform: translateY(-2px);
+        }
+        
+        .glass-strong {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(30px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+        }
+        
+        .dark .glass-strong {
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+        }
+        
+        .light .glass-strong {
+            background: rgba(255, 255, 255, 0.95);
+            border: 1px solid rgba(15, 23, 42, 0.1);
+            box-shadow: 0 20px 60px rgba(15, 23, 42, 0.1);
+        }
+        
+        .bg-gradient-mesh {
+            background: 
+                radial-gradient(at 0% 0%, rgba(99, 102, 241, 0.2) 0px, transparent 50%),
+                radial-gradient(at 100% 100%, rgba(34, 211, 238, 0.2) 0px, transparent 50%),
+                radial-gradient(at 50% 50%, rgba(251, 191, 36, 0.1) 0px, transparent 50%);
+        }
+        
+        .light .bg-gradient-mesh {
+            background: 
+                radial-gradient(at 0% 0%, rgba(99, 102, 241, 0.1) 0px, transparent 50%),
+                radial-gradient(at 100% 100%, rgba(34, 211, 238, 0.1) 0px, transparent 50%),
+                radial-gradient(at 50% 50%, rgba(251, 191, 36, 0.05) 0px, transparent 50%);
+        }
+        
+        input[type="range"] {
+            -webkit-appearance: none;
+            appearance: none;
+            background: transparent;
+            cursor: pointer;
+            width: 100%;
+        }
+        
+        .dark input[type="range"]::-webkit-slider-track {
+            background: linear-gradient(to right, #ef4444, #f59e0b, #22d3ee, #6366f1);
+            height: 10px;
+            border-radius: 5px;
+        }
+        
+        .light input[type="range"]::-webkit-slider-track {
+            background: linear-gradient(to right, #ef4444, #f59e0b, #22d3ee, #6366f1);
+            height: 10px;
+            border-radius: 5px;
+            opacity: 0.7;
+        }
+        
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            background: white;
+            height: 26px;
+            width: 26px;
+            border-radius: 50%;
+            border: 4px solid #6366f1;
+            box-shadow: 0 0 15px rgba(99, 102, 241, 0.6);
+            transition: all 0.2s ease;
+        }
+        
+        input[type="range"]::-webkit-slider-thumb:hover {
+            transform: scale(1.2);
+            box-shadow: 0 0 25px rgba(99, 102, 241, 0.8);
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+            box-shadow: 0 10px 30px rgba(99, 102, 241, 0.3);
+            transition: all 0.3s ease;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 40px rgba(99, 102, 241, 0.5);
+        }
+        
+        .stat-card {
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(99, 102, 241, 0.1), transparent);
+            transition: left 0.5s;
+        }
+        
+        .stat-card:hover::before {
+            left: 100%;
+        }
+        
+        .theme-toggle {
+            position: relative;
+            width: 60px;
+            height: 30px;
+            background: rgba(99, 102, 241, 0.2);
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid rgba(99, 102, 241, 0.3);
+        }
+        
+        .theme-toggle::before {
+            content: '🌙';
+            position: absolute;
+            top: 2px;
+            left: 3px;
+            width: 22px;
+            height: 22px;
+            background: white;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+        
+        .light .theme-toggle::before {
+            content: '☀️';
+            left: 31px;
+            background: #fbbf24;
+        }
+        
+        .floating-orb {
+            position: fixed;
+            border-radius: 50%;
+            filter: blur(60px);
+            opacity: 0.6;
+            animation: float 6s ease-in-out infinite;
+            pointer-events: none;
+        }
+        
+        .orb-1 {
+            top: 10%;
+            left: 10%;
+            width: 300px;
+            height: 300px;
+            background: rgba(99, 102, 241, 0.3);
+            animation-delay: 0s;
+        }
+        
+        .orb-2 {
+            bottom: 10%;
+            right: 10%;
+            width: 400px;
+            height: 400px;
+            background: rgba(34, 211, 238, 0.3);
+            animation-delay: 2s;
+        }
+        
+        .orb-3 {
+            top: 50%;
+            left: 50%;
+            width: 350px;
+            height: 350px;
+            background: rgba(251, 191, 36, 0.2);
+            animation-delay: 4s;
+        }
+        
+        .light .floating-orb {
+            opacity: 0.3;
+            filter: blur(80px);
+        }
+        
+        @keyframes shimmer {
+            0% { background-position: -1000px 0; }
+            100% { background-position: 1000px 0; }
+        }
+        
+        .shimmer {
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            background-size: 1000px 100%;
+            animation: shimmer 3s infinite;
+        }
+        
+        .result-card {
+            animation: slideIn 0.5s ease-out forwards;
+        }
+    </style>
+</head>
+<body class="dark font-sans">
+    <!-- Floating orbs -->
+    <div class="floating-orb orb-1"></div>
+    <div class="floating-orb orb-2"></div>
+    <div class="floating-orb orb-3"></div>
+    
+    <!-- Background gradient -->
+    <div class="fixed inset-0 bg-gradient-mesh opacity-50 pointer-events-none"></div>
+    
+    <div class="relative z-10">
+        <!-- Navigation -->
+        <nav class="fixed top-0 left-0 right-0 z-50 glass-strong border-b" style="border-color: var(--glass-border);">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex items-center justify-between h-16">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-10 h-10 bg-gradient-to-br from-primary-500 to-accent-500 rounded-xl flex items-center justify-center shadow-lg">
+                            <span class="text-2xl font-bold text-white">RL</span>
+                        </div>
+                        <span class="text-xl font-display font-bold gradient-text">ReputationLend</span>
+                    </div>
+                    
+                    <div class="flex items-center space-x-4">
+                        <!-- Theme Toggle -->
+                        <div class="theme-toggle" onclick="toggleTheme()" title="Toggle theme"></div>
+                        
+                        <button onclick="scrollToCalculator()" class="btn-primary text-white font-semibold py-2 px-6 rounded-xl">
+                            Try Calculator
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </nav>
+        
+        <!-- Hero Section -->
+        <section class="min-h-screen flex items-center justify-center px-4 sm:px-6 lg:px-8 pt-20">
+            <div class="max-w-7xl mx-auto text-center">
+                <!-- Badge -->
+                <div class="inline-flex items-center space-x-2 glass px-5 py-2.5 rounded-full mb-8 animate-float">
+                    <span class="relative flex h-3 w-3">
+                        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-accent-400 opacity-75"></span>
+                        <span class="relative inline-flex rounded-full h-3 w-3 bg-accent-500"></span>
+                    </span>
+                    <span class="text-sm font-medium" style="color: var(--text-secondary);">Powered by Ethos Network & Base</span>
+                </div>
+                
+                <!-- Main headline -->
+                <h1 class="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-display font-bold mb-6 leading-tight">
+                    Your <span class="gradient-text">Reputation</span><br />
+                    Is Your <span class="gradient-text">Collateral</span>
+                </h1>
+                
+                <!-- Subheadline -->
+                <p class="text-xl sm:text-2xl max-w-3xl mx-auto mb-12" style="color: var(--text-secondary);">
+                    The first DeFi lending protocol where your <span class="text-accent-400 font-semibold">Ethos reputation score</span> determines your borrowing power. <span class="text-primary-400 font-semibold">High reputation = low collateral.</span>
+                </p>
+                
+                <!-- CTA buttons -->
+                <div class="flex flex-col sm:flex-row items-center justify-center gap-4 mb-20">
+                    <button onclick="scrollToCalculator()" class="btn-primary text-white font-semibold py-4 px-10 rounded-xl group">
+                        Calculate Your Terms
+                        <svg class="inline-block ml-2 w-5 h-5 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                        </svg>
+                    </button>
+                </div>
+                
+                <!-- Key stats -->
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 max-w-4xl mx-auto">
+                    <div class="stat-card glass rounded-2xl p-8 hover:scale-105 transition-transform duration-300">
+                        <div class="text-5xl font-display font-bold gradient-text mb-3">80%</div>
+                        <div style="color: var(--text-secondary);" class="font-medium">Less Collateral Needed</div>
+                    </div>
+                    
+                    <div class="stat-card glass rounded-2xl p-8 hover:scale-105 transition-transform duration-300">
+                        <div class="text-5xl font-display font-bold gradient-text mb-3">3%</div>
+                        <div style="color: var(--text-secondary);" class="font-medium">APR for Top Reputation</div>
+                    </div>
+                    
+                    <div class="stat-card glass rounded-2xl p-8 hover:scale-105 transition-transform duration-300">
+                        <div class="text-5xl font-display font-bold gradient-text mb-3">24/7</div>
+                        <div style="color: var(--text-secondary);" class="font-medium">Instant Approvals</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- INTERACTIVE CALCULATOR SECTION -->
+        <section id="calculator" class="py-20 px-4 sm:px-6 lg:px-8">
+            <div class="max-w-6xl mx-auto">
+                <div class="text-center mb-16">
+                    <div class="inline-block glass px-4 py-2 rounded-full mb-4">
+                        <span class="text-sm font-semibold text-accent-400">✨ Interactive Demo</span>
+                    </div>
+                    <h2 class="text-4xl sm:text-5xl md:text-6xl font-display font-bold mb-4">
+                        <span class="gradient-text">Loan Calculator</span>
+                    </h2>
+                    <p class="text-xl" style="color: var(--text-secondary);">See how your Ethos score affects your lending terms in real-time</p>
+                </div>
+                
+                <div class="grid lg:grid-cols-2 gap-8">
+                    <!-- Input Panel -->
+                    <div class="glass-strong rounded-3xl p-8 border-2 border-primary-500/30 hover:border-primary-500/50 transition-all duration-300">
+                        <h3 class="text-2xl font-display font-bold mb-8 flex items-center">
+                            <span class="w-10 h-10 bg-gradient-to-br from-primary-500 to-accent-500 rounded-xl flex items-center justify-center mr-3">
+                                <span class="text-xl">📊</span>
+                            </span>
+                            Your Details
+                        </h3>
+                        
+                        <!-- Loan Amount Input -->
+                        <div class="mb-8">
+                            <label class="block text-sm font-semibold mb-3" style="color: var(--text-secondary);">Desired Loan Amount (ETH)</label>
+                            <div class="relative">
+                                <input 
+                                    type="number" 
+                                    id="loanAmount" 
+                                    value="1" 
+                                    step="0.1"
+                                    min="0.1"
+                                    class="w-full glass border-2 border-primary-500/30 focus:border-primary-500 rounded-2xl px-6 py-4 text-3xl font-bold focus:outline-none transition-all duration-300"
+                                    style="color: var(--text-primary); background: var(--glass-bg);"
+                                    oninput="calculateLoan()"
+                                />
+                                <div class="absolute right-6 top-1/2 -translate-y-1/2 text-2xl font-bold text-primary-500">ETH</div>
+                            </div>
+                            <div class="text-sm mt-3 font-medium" style="color: var(--text-secondary);">≈ $<span id="usdAmount" class="text-accent-400 font-bold">3,200</span> USD</div>
+                        </div>
+                        
+                        <!-- Ethos Score Slider -->
+                        <div class="mb-8">
+                            <label class="block text-sm font-semibold mb-3" style="color: var(--text-secondary);">
+                                Your Ethos Reputation Score
+                            </label>
+                            <div class="glass rounded-2xl p-6 border-2 border-accent-500/30">
+                                <input 
+                                    type="range" 
+                                    id="ethosScore" 
+                                    min="0" 
+                                    max="2800" 
+                                    value="1800" 
+                                    step="50"
+                                    class="w-full mb-4"
+                                    oninput="calculateLoan()"
+                                />
+                                <div class="flex justify-between text-xs font-medium mb-4" style="color: var(--text-secondary);">
+                                    <span>0 Untrusted</span>
+                                    <span>2800 Exemplary</span>
+                                </div>
+                                <div class="text-center">
+                                    <div class="text-5xl font-display font-bold gradient-text mb-2" id="scoreDisplay">1800</div>
+                                    <div class="text-sm font-semibold" style="color: var(--text-secondary);">Current Score</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Quick Presets -->
+                        <div>
+                            <label class="block text-sm font-semibold mb-3" style="color: var(--text-secondary);">Quick Test Scores:</label>
+                            <div class="grid grid-cols-2 gap-3">
+                                <button onclick="setScore(2200)" class="glass rounded-xl px-4 py-3 text-sm font-semibold hover:scale-105 hover:border-primary-500 border-2 border-transparent transition-all duration-300 flex items-center justify-center space-x-2">
+                                    <span>👑</span><span>Exemplary</span>
+                                </button>
+                                <button onclick="setScore(1800)" class="glass rounded-xl px-4 py-3 text-sm font-semibold hover:scale-105 hover:border-accent-500 border-2 border-transparent transition-all duration-300 flex items-center justify-center space-x-2">
+                                    <span>⭐</span><span>Reputable</span>
+                                </button>
+                                <button onclick="setScore(1400)" class="glass rounded-xl px-4 py-3 text-sm font-semibold hover:scale-105 hover:border-yellow-500 border-2 border-transparent transition-all duration-300 flex items-center justify-center space-x-2">
+                                    <span>😐</span><span>Neutral</span>
+                                </button>
+                                <button onclick="setScore(1000)" class="glass rounded-xl px-4 py-3 text-sm font-semibold hover:scale-105 hover:border-red-500 border-2 border-transparent transition-all duration-300 flex items-center justify-center space-x-2">
+                                    <span>⚠️</span><span>Untrusted</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Results Panel -->
+                    <div class="result-card glass-strong rounded-3xl p-8 border-2 border-accent-500/30 relative overflow-hidden">
+                        <div class="absolute top-0 right-0 w-96 h-96 bg-gradient-to-br from-primary-500/20 via-accent-500/20 to-transparent rounded-full blur-3xl animate-pulse-slow"></div>
+                        
+                        <div class="relative">
+                            <h3 class="text-2xl font-display font-bold mb-8 flex items-center">
+                                <span class="w-10 h-10 bg-gradient-to-br from-accent-500 to-primary-500 rounded-xl flex items-center justify-center mr-3 animate-glow">
+                                    <span class="text-xl">💎</span>
+                                </span>
+                                Your Lending Terms
+                            </h3>
+                            
+                            <!-- Reputation Tier Badge -->
+                            <div class="mb-8">
+                                <div id="tierBadge" class="inline-flex items-center space-x-3 px-5 py-3 rounded-2xl text-sm font-bold border-2 animate-pulse-slow">
+                                    <span id="tierEmoji" class="text-2xl">⭐</span>
+                                    <div>
+                                        <div id="tierName" class="text-lg">Reputable</div>
+                                        <div class="text-xs opacity-75">Reputation Tier</div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Key Metrics -->
+                            <div class="space-y-4">
+                                <!-- Required Collateral -->
+                                <div class="glass rounded-2xl p-6 border-2 border-green-500/30 hover:border-green-500/50 transition-all duration-300 hover:scale-105">
+                                    <div class="flex items-center justify-between mb-2">
+                                        <div class="text-sm font-semibold" style="color: var(--text-secondary);">Required Collateral</div>
+                                        <span class="text-2xl">💰</span>
+                                    </div>
+                                    <div class="text-4xl font-bold text-green-400 mb-1" id="collateralAmount">0.50 ETH</div>
+                                    <div class="text-sm text-green-400 font-semibold" id="collateralPercent">50% of loan</div>
+                                </div>
+                                
+                                <!-- Interest Rate -->
+                                <div class="glass rounded-2xl p-6 border-2 border-primary-500/30 hover:border-primary-500/50 transition-all duration-300 hover:scale-105">
+                                    <div class="flex items-center justify-between mb-2">
+                                        <div class="text-sm font-semibold" style="color: var(--text-secondary);">Interest Rate (APR)</div>
+                                        <span class="text-2xl">📈</span>
+                                    </div>
+                                    <div class="text-4xl font-bold text-primary-400 mb-1" id="interestRate">6%</div>
+                                    <div class="text-sm font-semibold" style="color: var(--text-secondary);">Annual Percentage Rate</div>
+                                </div>
+                                
+                                <!-- Total Repayment -->
+                                <div class="glass rounded-2xl p-6 border-2 border-accent-500/30 hover:border-accent-500/50 transition-all duration-300 hover:scale-105">
+                                    <div class="flex items-center justify-between mb-2">
+                                        <div class="text-sm font-semibold" style="color: var(--text-secondary);">Total Repayment (1 Year)</div>
+                                        <span class="text-2xl">🎯</span>
+                                    </div>
+                                    <div class="text-4xl font-bold text-accent-400 mb-1" id="totalRepayment">1.06 ETH</div>
+                                    <div class="text-sm font-semibold" style="color: var(--text-secondary);">Loan + Interest</div>
+                                </div>
+                            </div>
+                            
+                            <!-- Savings Highlight -->
+                            <div class="mt-6 pt-6 border-t" style="border-color: var(--glass-border);">
+                                <div class="text-center glass rounded-2xl p-6 border-2 border-gold-400/30">
+                                    <div class="text-4xl mb-2">🎉</div>
+                                    <div class="text-sm font-semibold mb-2" style="color: var(--text-secondary);">Savings vs Traditional DeFi</div>
+                                    <div class="text-3xl font-bold text-gold-400 mb-1" id="savings">0.70 ETH</div>
+                                    <div class="text-sm font-bold text-gold-500" id="savingsPercent">58% less collateral</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Comparison Chart -->
+                <div class="mt-12 glass-strong rounded-3xl p-8 border-2 border-gold-400/30">
+                    <div class="text-center mb-8">
+                        <h3 class="text-3xl font-display font-bold mb-2">
+                            Side-by-Side <span class="gradient-text">Comparison</span>
+                        </h3>
+                        <p style="color: var(--text-secondary);">See the difference reputation makes</p>
+                    </div>
+                    
+                    <div class="grid md:grid-cols-2 gap-6">
+                        <!-- Traditional -->
+                        <div class="glass rounded-2xl p-6 border-2 border-red-500/30 hover:scale-105 transition-all duration-300">
+                            <div class="text-center mb-6">
+                                <span class="text-4xl mb-2 block">😕</span>
+                                <h4 class="text-xl font-bold text-red-400">Traditional DeFi</h4>
+                                <p class="text-sm mt-1" style="color: var(--text-secondary);">Over-collateralized lending</p>
+                            </div>
+                            <div class="space-y-3">
+                                <div class="flex justify-between items-center p-3 glass rounded-xl">
+                                    <span style="color: var(--text-secondary);" class="font-medium">Collateral:</span>
+                                    <span class="text-red-400 font-bold text-lg" id="tradCollateral">1.50 ETH</span>
+                                </div>
+                                <div class="flex justify-between items-center p-3 glass rounded-xl">
+                                    <span style="color: var(--text-secondary);" class="font-medium">Interest Rate:</span>
+                                    <span class="text-red-400 font-bold text-lg">12% APR</span>
+                                </div>
+                                <div class="flex justify-between items-center p-3 glass rounded-xl">
+                                    <span style="color: var(--text-secondary);" class="font-medium">Total Repayment:</span>
+                                    <span class="text-red-400 font-bold text-lg" id="tradRepayment">1.12 ETH</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Your Terms -->
+                        <div class="glass rounded-2xl p-6 border-2 border-green-500/30 hover:scale-105 transition-all duration-300 relative overflow-hidden">
+                            <div class="absolute top-0 right-0 w-32 h-32 bg-green-500/10 rounded-full blur-2xl"></div>
+                            <div class="relative">
+                                <div class="text-center mb-6">
+                                    <span class="text-4xl mb-2 block" id="yourEmoji">⭐</span>
+                                    <h4 class="text-xl font-bold text-green-400">Your ReputationLend Terms</h4>
+                                    <p class="text-sm mt-1" style="color: var(--text-secondary);">Reputation-based lending</p>
+                                </div>
+                                <div class="space-y-3">
+                                    <div class="flex justify-between items-center p-3 glass rounded-xl border border-green-500/20">
+                                        <span style="color: var(--text-secondary);" class="font-medium">Collateral:</span>
+                                        <span class="text-green-400 font-bold text-lg" id="yourCollateral">0.50 ETH</span>
+                                    </div>
+                                    <div class="flex justify-between items-center p-3 glass rounded-xl border border-green-500/20">
+                                        <span style="color: var(--text-secondary);" class="font-medium">Interest Rate:</span>
+                                        <span class="text-green-400 font-bold text-lg" id="yourRate">6% APR</span>
+                                    </div>
+                                    <div class="flex justify-between items-center p-3 glass rounded-xl border border-green-500/20">
+                                        <span style="color: var(--text-secondary);" class="font-medium">Total Repayment:</span>
+                                        <span class="text-green-400 font-bold text-lg" id="yourRepayment">1.06 ETH</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- How It Works -->
+        <section class="py-20 px-4 sm:px-6 lg:px-8">
+            <div class="max-w-7xl mx-auto">
+                <div class="text-center mb-16">
+                    <div class="inline-block glass px-4 py-2 rounded-full mb-4">
+                        <span class="text-sm font-semibold text-primary-400">⚡ Simple Process</span>
+                    </div>
+                    <h2 class="text-4xl font-display font-bold mb-4">
+                        How <span class="gradient-text">ReputationLend</span> Works
+                    </h2>
+                </div>
+                
+                <div class="grid md:grid-cols-3 gap-8">
+                    <div class="text-center glass rounded-3xl p-8 hover:scale-105 transition-all duration-300">
+                        <div class="w-20 h-20 bg-gradient-to-br from-primary-500 to-accent-500 rounded-2xl flex items-center justify-center text-4xl font-bold mb-6 mx-auto shadow-lg animate-float">1</div>
+                        <h3 class="text-xl font-display font-bold mb-3">Connect Wallet</h3>
+                        <p style="color: var(--text-secondary);">We fetch your Ethos reputation score automatically from the blockchain</p>
+                    </div>
+                    
+                    <div class="text-center glass rounded-3xl p-8 hover:scale-105 transition-all duration-300" style="animation-delay: 0.1s;">
+                        <div class="w-20 h-20 bg-gradient-to-br from-primary-500 to-accent-500 rounded-2xl flex items-center justify-center text-4xl font-bold mb-6 mx-auto shadow-lg animate-float" style="animation-delay: 2s;">2</div>
+                        <h3 class="text-xl font-display font-bold mb-3">Get Instant Terms</h3>
+                        <p style="color: var(--text-secondary);">See your personalized collateral requirements and interest rates</p>
+                    </div>
+                    
+                    <div class="text-center glass rounded-3xl p-8 hover:scale-105 transition-all duration-300" style="animation-delay: 0.2s;">
+                        <div class="w-20 h-20 bg-gradient-to-br from-primary-500 to-accent-500 rounded-2xl flex items-center justify-center text-4xl font-bold mb-6 mx-auto shadow-lg animate-float" style="animation-delay: 4s;">3</div>
+                        <h3 class="text-xl font-display font-bold mb-3">Borrow Smart</h3>
+                        <p style="color: var(--text-secondary);">Get instant loans with minimal collateral based on your reputation</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Footer -->
+        <footer class="glass-strong border-t mt-20" style="border-color: var(--glass-border);">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+                <div class="text-center">
+                    <div class="flex items-center justify-center space-x-3 mb-4">
+                        <div class="w-12 h-12 bg-gradient-to-br from-primary-500 to-accent-500 rounded-xl flex items-center justify-center shadow-lg">
+                            <span class="text-2xl font-bold text-white">RL</span>
+                        </div>
+                        <span class="text-2xl font-display font-bold gradient-text">ReputationLend</span>
+                    </div>
+                    <p style="color: var(--text-secondary);" class="text-sm mb-4 font-medium">
+                        Your reputation is your collateral.<br/>
+                        Built on Base, powered by Ethos Network.
+                    </p>
+                    <div class="flex justify-center space-x-4 mb-6">
+                        <span class="px-4 py-2 bg-primary-500/20 text-primary-300 rounded-xl text-sm font-bold border border-primary-500/30">
+                            Ethos Vibeathon 2025
+                        </span>
+                        <span class="px-4 py-2 bg-accent-500/20 text-accent-300 rounded-xl text-sm font-bold border border-accent-500/30">
+                            Net New Product
+                        </span>
+                    </div>
+                    <div style="color: var(--text-secondary);" class="text-sm">
+                        © 2026 ReputationLend. Built with 💙 for Ethos Vibeathon.
+                    </div>
+                </div>
+            </div>
+        </footer>
+    </div>
+    
+    <script>
+        // Theme toggle
+        function toggleTheme() {
+            const body = document.body;
+            if (body.classList.contains('dark')) {
+                body.classList.remove('dark');
+                body.classList.add('light');
+                localStorage.setItem('theme', 'light');
+            } else {
+                body.classList.remove('light');
+                body.classList.add('dark');
+                localStorage.setItem('theme', 'dark');
+            }
+        }
+        
+        // Load theme preference
+        window.addEventListener('DOMContentLoaded', () => {
+            const theme = localStorage.getItem('theme') || 'dark';
+            document.body.classList.add(theme);
+        });
+        
+        // ETH to USD rate
+        const ETH_USD_RATE = 3200;
+        
+        // Tier configurations
+        const TIERS = {
+            EXEMPLARY: { 
+                threshold: 2000, 
+                collateral: 0.20, 
+                rate: 3, 
+                name: 'Exemplary', 
+                emoji: '👑',
+                color: 'bg-primary-500/20 text-primary-300 border-primary-500'
+            },
+            REPUTABLE: { 
+                threshold: 1600, 
+                collateral: 0.50, 
+                rate: 6, 
+                name: 'Reputable', 
+                emoji: '⭐',
+                color: 'bg-accent-500/20 text-accent-300 border-accent-500'
+            },
+            NEUTRAL: { 
+                threshold: 1200, 
+                collateral: 1.00, 
+                rate: 10, 
+                name: 'Neutral', 
+                emoji: '😐',
+                color: 'bg-yellow-500/20 text-yellow-300 border-yellow-500'
+            },
+            UNTRUSTED: { 
+                threshold: 0, 
+                collateral: 1.50, 
+                rate: 15, 
+                name: 'Untrusted', 
+                emoji: '⚠️',
+                color: 'bg-red-500/20 text-red-300 border-red-500'
+            }
+        };
+        
+        function getTier(score) {
+            if (score >= TIERS.EXEMPLARY.threshold) return TIERS.EXEMPLARY;
+            if (score >= TIERS.REPUTABLE.threshold) return TIERS.REPUTABLE;
+            if (score >= TIERS.NEUTRAL.threshold) return TIERS.NEUTRAL;
+            return TIERS.UNTRUSTED;
+        }
+        
+        function calculateLoan() {
+            const loanAmount = parseFloat(document.getElementById('loanAmount').value) || 1;
+            const ethosScore = parseInt(document.getElementById('ethosScore').value);
+            
+            // Update displays
+            document.getElementById('scoreDisplay').textContent = ethosScore;
+            document.getElementById('usdAmount').textContent = (loanAmount * ETH_USD_RATE).toLocaleString();
+            
+            // Get tier
+            const tier = getTier(ethosScore);
+            
+            // Update tier badge
+            const tierBadge = document.getElementById('tierBadge');
+            tierBadge.className = `inline-flex items-center space-x-3 px-5 py-3 rounded-2xl text-sm font-bold border-2 animate-pulse-slow ${tier.color}`;
+            document.getElementById('tierEmoji').textContent = tier.emoji;
+            document.getElementById('tierName').textContent = tier.name;
+            
+            // Calculate values
+            const requiredCollateral = loanAmount * tier.collateral;
+            const interestAmount = loanAmount * (tier.rate / 100);
+            const totalRepayment = loanAmount + interestAmount;
+            
+            // Traditional values
+            const tradCollateral = loanAmount * 1.50;
+            const tradInterest = loanAmount * 0.12;
+            const tradRepayment = loanAmount + tradInterest;
+            
+            // Savings
+            const collateralSavings = tradCollateral - requiredCollateral;
+            const savingsPercent = ((collateralSavings / tradCollateral) * 100).toFixed(0);
+            
+            // Update results
+            document.getElementById('collateralAmount').textContent = requiredCollateral.toFixed(2) + ' ETH';
+            document.getElementById('collateralPercent').textContent = (tier.collateral * 100) + '% of loan';
+            document.getElementById('interestRate').textContent = tier.rate + '%';
+            document.getElementById('totalRepayment').textContent = totalRepayment.toFixed(2) + ' ETH';
+            
+            document.getElementById('savings').textContent = collateralSavings.toFixed(2) + ' ETH';
+            document.getElementById('savingsPercent').textContent = savingsPercent + '% less collateral';
+            
+            // Update comparison
+            document.getElementById('tradCollateral').textContent = tradCollateral.toFixed(2) + ' ETH';
+            document.getElementById('tradRepayment').textContent = tradRepayment.toFixed(2) + ' ETH';
+            
+            document.getElementById('yourCollateral').textContent = requiredCollateral.toFixed(2) + ' ETH';
+            document.getElementById('yourRate').textContent = tier.rate + '% APR';
+            document.getElementById('yourRepayment').textContent = totalRepayment.toFixed(2) + ' ETH';
+            document.getElementById('yourEmoji').textContent = tier.emoji;
+        }
+        
+        function setScore(score) {
+            document.getElementById('ethosScore').value = score;
+            calculateLoan();
+        }
+        
+        function scrollToCalculator() {
+            document.getElementById('calculator').scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+        
+        // Initialize
+        window.onload = calculateLoan;
+    </script>
+</body>
+</html>
