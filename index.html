@@ -345,10 +345,22 @@
                             <span id="walletAddress">0x1234...5678</span>
                         </div>
                         
-                        <!-- Connect Wallet Button -->
-                        <button id="connectWalletBtn" onclick="connectWallet()" class="btn-primary text-white font-semibold py-2 px-6 rounded-xl">
-                            Connect Wallet
-                        </button>
+                        <!-- Connect Wallet Button with Security Note -->
+                        <div class="relative group">
+                            <button id="connectWalletBtn" onclick="connectWallet()" class="btn-primary text-white font-semibold py-2 px-6 rounded-xl flex items-center gap-2">
+                                <span>🔒</span>
+                                <span>Connect Wallet</span>
+                            </button>
+                            <!-- Tooltip -->
+                            <div class="hidden group-hover:block absolute right-0 top-full mt-2 w-64 glass-strong rounded-xl p-3 border border-green-500/30 text-xs z-50 animate-slide-in">
+                                <div class="flex items-start gap-2">
+                                    <span class="text-green-400">✓</span>
+                                    <p style="color: var(--text-secondary);">
+                                        <strong class="text-green-400">Read-only access.</strong> Cannot access funds or sign transactions.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -424,6 +436,28 @@
                             </span>
                             Your Details
                         </h3>
+                        
+                        <!-- Security Badge -->
+                        <div class="mb-6 p-4 glass rounded-2xl border-2 border-green-500/30 bg-green-500/5">
+                            <div class="flex items-start gap-3">
+                                <div class="w-10 h-10 bg-green-500/20 rounded-xl flex items-center justify-center flex-shrink-0">
+                                    <span class="text-2xl">🔒</span>
+                                </div>
+                                <div class="flex-1">
+                                    <div class="flex items-center gap-2 mb-1">
+                                        <h4 class="text-sm font-bold text-green-400">100% Safe & Secure</h4>
+                                        <span class="text-xs px-2 py-0.5 bg-green-500/20 text-green-400 rounded-full font-semibold">Read-Only</span>
+                                    </div>
+                                    <p class="text-xs" style="color: var(--text-secondary);">
+                                        This app only reads your public wallet address and Ethos score. 
+                                        <strong>Cannot access funds, sign transactions, or move assets.</strong>
+                                    </p>
+                                    <button onclick="toggleSecurityInfo()" class="text-xs text-accent-400 hover:text-accent-300 mt-2 font-semibold underline">
+                                        Learn more about security →
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
                         
                         <!-- Fetch Ethos Score Section -->
                         <div class="mb-8 p-6 glass rounded-2xl border-2 border-accent-500/30">
@@ -677,6 +711,127 @@
             </div>
         </section>
         
+        <!-- Security Info Modal -->
+        <div id="securityModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4" style="display: none;" onclick="toggleSecurityInfo()">
+            <div class="glass-strong rounded-3xl p-8 max-w-3xl w-full border-2 border-green-500/30 relative animate-slide-in" onclick="event.stopPropagation()">
+                <button onclick="toggleSecurityInfo()" class="absolute top-6 right-6 w-10 h-10 glass rounded-xl flex items-center justify-center hover:bg-red-500/20 transition-all">
+                    <span class="text-2xl">×</span>
+                </button>
+                
+                <div class="text-center mb-8">
+                    <div class="w-20 h-20 bg-gradient-to-br from-green-500 to-green-600 rounded-2xl flex items-center justify-center text-4xl mx-auto mb-4 shadow-lg">
+                        🔒
+                    </div>
+                    <h3 class="text-3xl font-display font-bold mb-2">
+                        <span class="gradient-text">Security & Privacy</span>
+                    </h3>
+                    <p style="color: var(--text-secondary);">Your safety is our top priority</p>
+                </div>
+                
+                <div class="grid md:grid-cols-2 gap-6 mb-8">
+                    <!-- What We Access -->
+                    <div class="glass rounded-2xl p-6 border-2 border-green-500/20">
+                        <div class="flex items-center gap-3 mb-4">
+                            <span class="text-3xl">✅</span>
+                            <h4 class="text-lg font-bold text-green-400">What We Access</h4>
+                        </div>
+                        <ul class="space-y-3 text-sm" style="color: var(--text-secondary);">
+                            <li class="flex items-start gap-2">
+                                <span class="text-green-400 mt-0.5">•</span>
+                                <span><strong>Public wallet address</strong> - Already visible on blockchain</span>
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <span class="text-green-400 mt-0.5">•</span>
+                                <span><strong>Ethos reputation score</strong> - Public API data</span>
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <span class="text-green-400 mt-0.5">•</span>
+                                <span><strong>Display information</strong> - Show your address on screen</span>
+                            </li>
+                        </ul>
+                    </div>
+                    
+                    <!-- What We NEVER Access -->
+                    <div class="glass rounded-2xl p-6 border-2 border-red-500/20">
+                        <div class="flex items-center gap-3 mb-4">
+                            <span class="text-3xl">❌</span>
+                            <h4 class="text-lg font-bold text-red-400">What We NEVER Access</h4>
+                        </div>
+                        <ul class="space-y-3 text-sm" style="color: var(--text-secondary);">
+                            <li class="flex items-start gap-2">
+                                <span class="text-red-400 mt-0.5">•</span>
+                                <span><strong>Private keys</strong> - Never shared, ever</span>
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <span class="text-red-400 mt-0.5">•</span>
+                                <span><strong>Your funds</strong> - Cannot move or access</span>
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <span class="text-red-400 mt-0.5">•</span>
+                                <span><strong>Transaction signing</strong> - No permissions requested</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <!-- Security Badges -->
+                <div class="grid grid-cols-3 gap-4 mb-6">
+                    <div class="text-center glass rounded-xl p-4">
+                        <div class="text-2xl mb-2">🛡️</div>
+                        <div class="text-xs font-bold text-primary-400">Read-Only</div>
+                        <div class="text-xs" style="color: var(--text-secondary);">No write access</div>
+                    </div>
+                    <div class="text-center glass rounded-xl p-4">
+                        <div class="text-2xl mb-2">🔐</div>
+                        <div class="text-xs font-bold text-accent-400">Zero Risk</div>
+                        <div class="text-xs" style="color: var(--text-secondary);">No fund access</div>
+                    </div>
+                    <div class="text-center glass rounded-xl p-4">
+                        <div class="text-2xl mb-2">✨</div>
+                        <div class="text-xs font-bold text-green-400">Transparent</div>
+                        <div class="text-xs" style="color: var(--text-secondary);">Open source</div>
+                    </div>
+                </div>
+                
+                <!-- Technical Details -->
+                <div class="glass rounded-2xl p-6 border-2 border-accent-500/20">
+                    <h4 class="text-sm font-bold text-accent-400 mb-3">🔬 Technical Details</h4>
+                    <div class="space-y-2 text-xs font-mono" style="color: var(--text-secondary);">
+                        <div class="flex justify-between">
+                            <span>Method Used:</span>
+                            <span class="text-green-400 font-semibold">eth_requestAccounts</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span>Transaction Signing:</span>
+                            <span class="text-red-400 font-semibold">NOT REQUESTED</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span>Token Approvals:</span>
+                            <span class="text-red-400 font-semibold">NONE</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span>Smart Contract Calls:</span>
+                            <span class="text-red-400 font-semibold">NONE</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span>Data Storage:</span>
+                            <span class="text-accent-400 font-semibold">Local browser only</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="text-center mt-6">
+                    <p class="text-sm mb-4" style="color: var(--text-secondary);">
+                        <strong>You can disconnect anytime</strong> via MetaMask settings. 
+                        We respect your privacy and security.
+                    </p>
+                    <button onclick="toggleSecurityInfo()" class="btn-primary text-white font-semibold py-3 px-8 rounded-xl">
+                        Got It, Thanks!
+                    </button>
+                </div>
+            </div>
+        </div>
+        
         <!-- Footer -->
         <footer class="glass-strong border-t mt-20" style="border-color: var(--glass-border);">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
@@ -697,6 +852,10 @@
                         </span>
                         <span class="px-4 py-2 bg-accent-500/20 text-accent-300 rounded-xl text-sm font-bold border border-accent-500/30">
                             Net New Product
+                        </span>
+                        <span class="px-4 py-2 bg-green-500/20 text-green-300 rounded-xl text-sm font-bold border border-green-500/30 flex items-center gap-2">
+                            <span>🔒</span>
+                            <span>Secure & Safe</span>
                         </span>
                     </div>
                     <div style="color: var(--text-secondary);" class="text-sm">
@@ -725,6 +884,28 @@
                 localStorage.setItem('theme', 'dark');
             }
         }
+        
+        // Toggle security info modal
+        function toggleSecurityInfo() {
+            const modal = document.getElementById('securityModal');
+            if (modal.style.display === 'none') {
+                modal.style.display = 'flex';
+                document.body.style.overflow = 'hidden';
+            } else {
+                modal.style.display = 'none';
+                document.body.style.overflow = 'auto';
+            }
+        }
+        
+        // Close modal on escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                const modal = document.getElementById('securityModal');
+                if (modal.style.display === 'flex') {
+                    toggleSecurityInfo();
+                }
+            }
+        });
         
         // Load theme
         window.addEventListener('DOMContentLoaded', () => {
